@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        #product-detail {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .card-detail {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+    <section id="product-detail"></section>
+    <script src="main.js"></script>
+    <script>
+        const container = document.querySelector('#product-detail')
+        console.log(container);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedId = urlParams.get('id');
+        const product = products.find(p => p.id === parseInt(selectedId));
+        
+        const cardDetail = product.renderDetail(product);
+        cardDetail.className = 'card-detail';
+        container.appendChild(cardDetail);
+    </script>
+</body>
+</html>

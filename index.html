@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            width: 100vw;
+            height: fit-content;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+        #product-list {
+            width: 100vw;
+            height: fit-content;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: auto;
+            gap: 2rem;
+        }
+        .card {
+            width: 256px;
+            height: 360px;
+            background-color: aquamarine;
+            cursor: pointer;
+        }
+
+        .btn {
+            width: 4rem;
+            height: 2rem;
+        }
+
+        #input-sort {
+            margin: .5rem .5rem 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="filter-controls"></div>
+    <section id="product-list"></section>
+    <script src="main.js"></script>
+    <script>
+        const productList = document.querySelector('#product-list');
+        const filterControls = document.querySelector('#filter-controls');
+        const healthySort = document.createElement('div');
+
+        const labelHealthy = document.createElement('label');
+        labelHealthy.setAttribute('for', 'input-sort');
+        labelHealthy.textContent = 'Healthy';
+
+        const inputHealthy = document.createElement('input');
+        inputHealthy.id = 'input-sort';
+        inputHealthy.type = 'checkbox';
+        inputHealthy.addEventListener('change', (e, category) => {
+            const productToShow = e.target.checked ? products.filter(p => p.category === 'healthy') : products;
+            console.log(productToShow);
+            
+            protoCall.renderProducts(productList, productToShow);
+        });
+
+        healthySort.append(inputHealthy, labelHealthy);
+        filterControls.appendChild(healthySort);
+
+        protoCall.renderProducts(productList, products);
+        protoCall.addFilter();
+    </script>
+</body>
+</html>
