@@ -30,7 +30,7 @@
         const selectedId = urlParams.get('id');
         const product = products.find(p => p.id === parseInt(selectedId));
         
-        const cardDetail = product.renderDetail(product);
+        const cardDetail = product._renderDetail(product);
         cardDetail.className = 'card-detail';
         container.appendChild(cardDetail);
     </script>

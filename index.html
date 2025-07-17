@@ -42,33 +42,13 @@
     </style>
 </head>
 <body>
-    <div id="filter-controls"></div>
-    <section id="product-list"></section>
+    
     <script src="main.js"></script>
     <script>
-        const productList = document.querySelector('#product-list');
-        const filterControls = document.querySelector('#filter-controls');
-        const healthySort = document.createElement('div');
-
-        const labelHealthy = document.createElement('label');
-        labelHealthy.setAttribute('for', 'input-sort');
-        labelHealthy.textContent = 'Healthy';
-
-        const inputHealthy = document.createElement('input');
-        inputHealthy.id = 'input-sort';
-        inputHealthy.type = 'checkbox';
-        inputHealthy.addEventListener('change', (e, category) => {
-            const productToShow = e.target.checked ? products.filter(p => p.category === 'healthy') : products;
-            console.log(productToShow);
-            
-            protoCall.renderProducts(productList, productToShow);
-        });
-
-        healthySort.append(inputHealthy, labelHealthy);
-        filterControls.appendChild(healthySort);
-
-        protoCall.renderProducts(productList, products);
-        protoCall.addFilter();
+        protoCall.renderProductList();
+        protoCall.addFilter('Healthy', 'category', 'healthy');
+        protoCall.addFilter('Unhealthy', 'category', 'unhealthy');
+        
     </script>
 </body>
 </html>

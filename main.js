@@ -12,9 +12,19 @@ function Products(options = {}) {
     this.filter = this.opt.filter;
 }
 
-// To-do: Create renderProductList, including rendering filterList
+Products.prototype.renderProductList = function () {
+    if (this.filter) {
+        this._filterControls = document.createElement('aside'); 
+        this._filterControls.id = 'filter-controls';
+        document.body.appendChild(this._filterControls);
+    }
+    this._productList = document.createElement('section');
+    this._productList.id = 'product-list';
+    document.body.appendChild(this._productList);
+    this._renderProducts(this._productList, products);
+}
 
-Products.prototype.renderListCard = function (product) {
+Products.prototype._renderListCard = function (product) {
     const card = document.createElement('a');
     card.href = `productdetail.html?id=${product.id}`;
     card.className = 'card';
@@ -25,15 +35,15 @@ Products.prototype.renderListCard = function (product) {
     return card;
 }
 
-Products.prototype.renderProducts = function (productList, productArray) {
+Products.prototype._renderProducts = function (productList, productArray) {
     productList.innerHTML = '';
     productArray.forEach(product => {
-        const card = product.renderListCard(product);
+        const card = this._renderListCard(product);
         productList.appendChild(card);
     });
 }
 
-Products.prototype.renderDetail = function (product) {
+Products.prototype._renderDetail = function (product) {
     const cardDetail = document.createElement('div');
     cardDetail.innerHTML = `
         <h3>${product.id}. ${product.name}</h3>
@@ -42,8 +52,23 @@ Products.prototype.renderDetail = function (product) {
     return cardDetail;
 }
 
-Products.prototype.addFilter = function (sortName, cssClass, callback) {
-    console.log(this.filter);
+Products.prototype.addFilter = function (filterName, filterProperty, filterValue, cssClass, callback) {
+    const filterToggle = document.createElement('div');
+
+    const labelFilter = document.createElement('label');
+    labelFilter.setAttribute('for', `input-filter-${filterValue}`);
+    labelFilter.textContent = `${filterName}`;
+
+    const inputFilter = document.createElement('input');
+    inputFilter.id = `input-filter-${filterValue}`;
+    inputFilter.type = 'checkbox';
+    inputFilter.addEventListener('change', (e) => {
+        const productToShow = e.target.checked ? products.filter(p => p[filterProperty] === `${filterValue}`) : products;
+        protoCall._renderProducts(this._productList, productToShow);
+    });
+
+    filterToggle.append(inputFilter, labelFilter);
+    this._filterControls.appendChild(filterToggle);
 }
 
 const protoCall = new Products({
