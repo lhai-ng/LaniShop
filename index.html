@@ -46,8 +46,11 @@
     <script src="main.js"></script>
     <script>
         protoCall.renderProductList();
-        protoCall.addFilter('Healthy', 'category', 'healthy');
-        protoCall.addFilter('Unhealthy', 'category', 'unhealthy');
+        protoCall.addFilterRadio('Healthy', 'category', 'healthy', '', protoCall.categoryCallback.bind(protoCall));
+        protoCall.addFilterRadio('Unhealthy', 'category', 'unhealthy', '', protoCall.categoryCallback.bind(protoCall));
+
+        protoCall.addFilterRadio('Under $15', 'price', 'under $15', '', protoCall.valueCallback.bind(protoCall));
+        protoCall.addFilterRadio('From $15', 'price', 'from $15', '', protoCall.valueCallback.bind(protoCall));
         
     </script>
 </body>
