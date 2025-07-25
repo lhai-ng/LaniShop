@@ -4,25 +4,30 @@ const products = [
         name: 'burger',
         price: '$11',
         category: 'unhealthy',
-        colors: ['red', 'blue'], 
+        colors: ['red', 'blue'],
+        rating: 4.1,
     }),
     new Products({
         id: 2,
         name: 'salad',
         price: '$12',
         category: 'healthy',
+        readyToShip: true,
+        rating: 3.6,
     }),
     new Products({
         id: 3,
         name: 'steak',
         price: '$13',
         category: 'healthy', 
+        rating: 2.4,
     }),
     new Products({
         id: 4,
         name: 'coke',
         price: '$14',
         category: 'unhealthy',
+        rating: 2.6,
     }),
     new Products({
         id: 5,
@@ -30,6 +35,7 @@ const products = [
         price: '$15',
         category: 'unhealthy',
         colors:['red', 'green'], 
+        rating: 4.7,
     }),
     new Products({
         id: 6,
@@ -37,18 +43,23 @@ const products = [
         price: '$16',
         category: 'healthy',
         colors:['blue', 'green'], 
+        readyToShip: true,
+        rating: 5,
     }),
     new Products({
         id: 7,
         name: 'spaghetti',
         price: '$17',
         category: 'healthy',
+        rating: 1.2,
     }),
     new Products({
         id: 8,
         name: 'gum',
         price: '$18',
         category: 'unhealthy', 
+        readyToShip: true,
+        rating: 3.4,
     }),
 ]
 
@@ -64,6 +75,8 @@ function Products(options = {}) {
     this.price = this.opt.price;
     this.category = this.opt.category;
     this.colors = this.opt.colors;
+    this.rating = this.opt.rating;
+    this.readyToShip = this.opt.readyToShip
 
     this.filter = this.opt.filter;
     this._cleanRegex = /[^a-zA-Z0-9]/g;
@@ -73,6 +86,8 @@ function Products(options = {}) {
         category: null,
         price: null,
         colors: [],
+        rating: null,
+        readyToShip: null,
     }
     
 }
@@ -178,8 +193,18 @@ Products.prototype.categoryCallback = function (status, filterValue) {
     this._allFilterProducts();
 }
 
+Products.prototype.readyToShipCallback = function (status, filterValue) {
+    this._activeFilter.readyToShip = status ? filterValue : null;
+    this._allFilterProducts();
+}
+
 Products.prototype.priceCallback = function (status, filterValue) {
     this._activeFilter.price = status ? filterValue : null;
+    this._allFilterProducts();
+}
+
+Products.prototype.ratingCallback = function (status, filterValue) {
+    this._activeFilter.rating = status ? filterValue : null;
     this._allFilterProducts();
 }
 
@@ -202,6 +227,10 @@ Products.prototype._allFilterProducts = function () {
         productsToShow = productsToShow.filter(p => p.category === this._activeFilter.category);
     }
 
+    if (this._activeFilter.readyToShip) {
+        productsToShow = productsToShow.filter(p => p.readyToShip === this._activeFilter.readyToShip);
+    }
+
     if (this._activeFilter.price) {
         const priceRange = this.opt.priceCondition(this._activeFilter.price);
         const minValue = priceRange.minValue;
@@ -209,6 +238,17 @@ Products.prototype._allFilterProducts = function () {
             
         productsToShow = productsToShow.filter(p => {
             p = parseInt(p.price.replace(this._cleanRegex, ''));
+            return minValue <= p && p < maxValue;
+        });
+    }
+
+    if (this._activeFilter.rating) {
+        const ratingRange = this.opt.ratingCondition(this._activeFilter.rating);
+        const minValue = ratingRange.minValue;
+        const maxValue = ratingRange.maxValue;
+            
+        productsToShow = productsToShow.filter(p => {
+            p = parseInt(p.rating);
             return minValue <= p && p < maxValue;
         });
     }
@@ -231,6 +271,26 @@ const protoCall = new Products({
             return {minValue: 15, maxValue: Infinity};
         }
         return {minValue: 0, maxValue: Infinity};
+    },
+    ratingCondition: (filterValue) => {
+        switch (filterValue) {
+            case 'from 1*':
+                return {minValue: 1, maxValue: 6};
+                break;
+            case 'from 2*':
+                return {minValue: 2, maxValue: 6};
+                break;
+            case 'from 3*':
+                return {minValue: 3, maxValue: 6};
+                break;
+            case 'from 4*':
+                return {minValue: 4, maxValue: 6};
+                break;
+            case '5*':
+                return {minValue: 5, maxValue: 6};
+                break;
+        }
+        return {minValue: 0, maxValue: 6};
     }
 });
 

@@ -46,6 +46,7 @@
     <script src="main.js"></script>
     <script>
         protoCall.renderProductList();
+        protoCall.addFilterRadio('Ready to Ship', 'readyToShip', true, '', protoCall.readyToShipCallback.bind(protoCall));
         protoCall.addFilterRadio('Healthy', 'category', 'healthy', '', protoCall.categoryCallback.bind(protoCall));
         protoCall.addFilterRadio('Unhealthy', 'category', 'unhealthy', '', protoCall.categoryCallback.bind(protoCall));
 
@@ -55,6 +56,12 @@
         protoCall.addFilterCheckbox('Red', 'color', 'red', '', protoCall.colorCallback.bind(protoCall));
         protoCall.addFilterCheckbox('Green', 'color', 'green', '', protoCall.colorCallback.bind(protoCall));
         protoCall.addFilterCheckbox('Mlue', 'color', 'blue', '', protoCall.colorCallback.bind(protoCall));
+
+        protoCall.addFilterRadio('From 1*', 'rating', 'from 1*', '', protoCall.ratingCallback.bind(protoCall));
+        protoCall.addFilterRadio('From 2*', 'rating', 'from 2*', '', protoCall.ratingCallback.bind(protoCall));
+        protoCall.addFilterRadio('From 3*', 'rating', 'from 3*', '', protoCall.ratingCallback.bind(protoCall));
+        protoCall.addFilterRadio('From 4*', 'rating', 'from 4*', '', protoCall.ratingCallback.bind(protoCall));
+        protoCall.addFilterRadio('5*', 'rating', '5*', '', protoCall.ratingCallback.bind(protoCall));
         
     </script>
 </body>
