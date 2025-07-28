@@ -1,15 +1,19 @@
 const products = [
     new Products({
         id: 1,
-        name: 'burger',
+        image: 'images/antifungispray.png',
+        name: 'Anti Fungi Spray',
         price: '$11',
+        prevPrice: '$13,99',
         category: 'unhealthy',
         colors: ['red', 'blue'],
         rating: 4.1,
+        sold: true,
     }),
     new Products({
         id: 2,
-        name: 'salad',
+        image: 'images/balconyrailingplanters.png',
+        name: 'Balcony-railing Planter',
         price: '$12',
         category: 'healthy',
         readyToShip: true,
@@ -17,29 +21,34 @@ const products = [
     }),
     new Products({
         id: 3,
-        name: 'steak',
+        image: 'images/basil.png',
+        name: 'Basil',
         price: '$13',
         category: 'healthy', 
         rating: 2.4,
     }),
     new Products({
         id: 4,
-        name: 'coke',
+        image: 'images/bioorganicfertilizer.png',
+        name: 'Bio-organic Fertilizer',
         price: '$14',
         category: 'unhealthy',
         rating: 2.6,
     }),
     new Products({
         id: 5,
-        name: 'fries',
+        image: 'images/blueberry.png',
+        name: 'Blueberry',
         price: '$15',
         category: 'unhealthy',
         colors:['red', 'green'], 
         rating: 4.7,
+        sold: true,
     }),
     new Products({
         id: 6,
-        name: 'chicken',
+        image: 'images/butterflypea.png',
+        name: 'Butterfly Pea',
         price: '$16',
         category: 'healthy',
         colors:['blue', 'green'], 
@@ -48,14 +57,17 @@ const products = [
     }),
     new Products({
         id: 7,
-        name: 'spaghetti',
+        image: 'images/cabbage.png',
+        name: 'Cabbage',
         price: '$17',
+        prevPrice: '$18.43',
         category: 'healthy',
         rating: 1.2,
     }),
     new Products({
         id: 8,
-        name: 'gum',
+        image: 'images/carrot.png',
+        name: 'Carrot',
         price: '$18',
         category: 'unhealthy', 
         readyToShip: true,
@@ -68,14 +80,19 @@ function Products(options = {}) {
         filter: false,
         priceCondition: null,
         colors: [],
+        sold: false,
+        prevPrice: '',
     }, options)
 
     this.id = this.opt.id;
+    this.image = this.opt.image
     this.name = this.opt.name;
     this.price = this.opt.price;
+    this.prevPrice = this.opt.prevPrice;
     this.category = this.opt.category;
     this.colors = this.opt.colors;
     this.rating = this.opt.rating;
+    this.sold = this.opt.sold
     this.readyToShip = this.opt.readyToShip
 
     this.filter = this.opt.filter;
@@ -83,10 +100,11 @@ function Products(options = {}) {
     this._radioStates = {};
 
     this._activeFilter = {
-        category: null,
         price: null,
         colors: [],
         rating: null,
+
+        category: null,
         readyToShip: null,
     }
     
@@ -109,8 +127,12 @@ Products.prototype._renderListCard = function (product) {
     card.href = `productdetail.html?id=${product.id}`;
     card.className = 'card';
     card.innerHTML = `
+        <img class="card-image" src=${product.image}>
+        <p>${product.rating}</p>
         <h3>${product.name}</h3>
         <p>${product.price}</p>
+        <p>${product.prevPrice}</p>
+        <button class="add-to-cart ${product.sold ? 'sold' : ''}">Add to cart!</button>
     `;
     return card;
 }
