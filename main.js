@@ -110,6 +110,90 @@ function Products(options = {}) {
     
 }
 
+// Render Card
+
+Products.prototype._renderListCard = function (product) {
+    const card = document.createElement('a');
+    card.href = `productdetail.html?id=${product.id}`;
+    card.className = 'card';
+    
+    this._renderImage(card, product);
+    this._renderRating(card, product);
+    this._renderName(card, product);
+    this._renderColors(card, product);
+    this._renderPrice(card, product);
+    this._renderPrevPrice(card, product);
+    this._renderButton(card, product)
+   
+    return card;
+}
+
+Products.prototype._renderImage = function (card, product) {
+    const cardImage = document.createElement('img');
+    cardImage.className = 'card-image';
+    cardImage.setAttribute('src', product.image);
+    card.appendChild(cardImage)
+}
+
+Products.prototype._renderRating = function(card, product) {
+    const cardRating = document.createElement('p');
+    cardRating.className = 'card-rating';
+    cardRating.textContent = product.rating;
+    card.appendChild(cardRating);
+}
+
+Products.prototype._renderName = function (card, product) {
+    const cardName = document.createElement('h4');
+    cardName.className = 'card-name';
+    cardName.textContent = product.name;
+    card.appendChild(cardName);
+}
+
+Products.prototype._renderColors = function (card, product) {
+    const colorList = document.createElement('div');
+    colorList.className = 'color-list';
+    card.appendChild(colorList);
+    if (product.colors.length > 0) {
+        product.colors.forEach(color => {
+            const colorSelection = document.createElement('div');
+            colorSelection.className = 'color-selection';
+            colorSelection.style.background = color;
+            colorList.appendChild(colorSelection);
+        });
+    }
+}
+
+Products.prototype._renderPrice = function (card, product) {
+    const cardPrice = document.createElement('p');
+    cardPrice.className = 'card-price';
+    cardPrice.textContent = product.price;
+    card.appendChild(cardPrice);
+}
+
+Products.prototype._renderPrevPrice = function (card, product) {
+    const cardPrevPrice = document.createElement('p');
+    cardPrevPrice.className = 'card-revprice';
+    cardPrevPrice.textContent = product.prevPrice;
+    card.appendChild(cardPrevPrice);
+}
+
+Products.prototype._renderButton = function (card, product) {
+    const cardButton = document.createElement('button');
+    cardButton.className = `add-to-cart ${product.sold ? 'sold' : ''}`;
+    cardButton.textContent = 'Add to cart!';
+    card.appendChild(cardButton);
+}
+
+// Render Product List
+
+Products.prototype._renderProducts = function (productList, productArray) {
+    productList.innerHTML = '';
+    productArray.forEach(product => {
+        const card = this._renderListCard(product);
+        productList.appendChild(card);
+    });
+}
+
 Products.prototype.renderProductList = function () {
     if (this.filter) {
         this._filterControls = document.createElement('aside'); 
@@ -122,39 +206,21 @@ Products.prototype.renderProductList = function () {
     this._renderProducts(this._productList, products);
 }
 
-Products.prototype._renderListCard = function (product) {
-    const card = document.createElement('a');
-    card.href = `productdetail.html?id=${product.id}`;
-    card.className = 'card';
-    card.innerHTML = `
-        <img class="card-image" src=${product.image}>
-        <p>${product.rating}</p>
-        <h3>${product.name}</h3>
-        <p>${product.price}</p>
-        <p>${product.prevPrice}</p>
-        <button class="add-to-cart ${product.sold ? 'sold' : ''}">Add to cart!</button>
-    `;
-    return card;
-}
-
-Products.prototype._renderProducts = function (productList, productArray) {
-    productList.innerHTML = '';
-    productArray.forEach(product => {
-        const card = this._renderListCard(product);
-        productList.appendChild(card);
-    });
-}
-
 Products.prototype._renderDetail = function (product) {
     const cardDetail = document.createElement('div');
     cardDetail.innerHTML = `
+        <img class="card-image" src=${product.image}>
+        <p>${product.rating}</p>
         <h3>${product.id}. ${product.name}</h3>
         <p>${product.price}</p>
+        <p>${product.prevPrice}</p>
+        <button class="add-to-cart ${product.sold ? 'sold' : ''}">Add to cart!</button>
     `;
     return cardDetail;
 }
 
 // Filter Types
+
 Products.prototype.addFilterRadio = function (filterName, filterProperty, filterValue, cssClass, callback) {
     const filterToggle = document.createElement('div');
 

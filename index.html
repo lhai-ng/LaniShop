@@ -26,7 +26,7 @@
         }
         .card {
             width: 256px;
-            height: 360px;
+            height: 400px;
             background-color: aquamarine;
             cursor: pointer;
         }
@@ -50,13 +50,24 @@
         }
 
         .sold::before {
-            content: 'SOLD';
+            content: 'SOLD!';
             z-index: 2;
             position: absolute;
             width: 100%;
             height: 100%;
             background-color: azure;
         }
+
+        .color-list {
+            display: flex;
+        }
+
+        .color-selection {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
     </style>
 </head>
 <body>
