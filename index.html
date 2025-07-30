@@ -74,23 +74,36 @@
     <script src="main.js"></script>
     <script>
         protoCall.renderProductList();
-        protoCall.addFilterRadio('Ready to Ship', 'readyToShip', true, '', protoCall.readyToShipCallback.bind(protoCall));
-        protoCall.addFilterRadio('Healthy', 'category', 'healthy', '', protoCall.categoryCallback.bind(protoCall));
-        protoCall.addFilterRadio('Unhealthy', 'category', 'unhealthy', '', protoCall.categoryCallback.bind(protoCall));
-
-        protoCall.addFilterRadio('Under $15', 'price', 'under $15', '', protoCall.priceCallback.bind(protoCall));
-        protoCall.addFilterRadio('From $15', 'price', 'from $15', '', protoCall.priceCallback.bind(protoCall));
-
-        protoCall.addFilterCheckbox('Red', 'color', 'red', '', protoCall.colorCallback.bind(protoCall));
-        protoCall.addFilterCheckbox('Green', 'color', 'green', '', protoCall.colorCallback.bind(protoCall));
-        protoCall.addFilterCheckbox('Mlue', 'color', 'blue', '', protoCall.colorCallback.bind(protoCall));
-
-        protoCall.addFilterRadio('From 1*', 'rating', 'from 1*', '', protoCall.ratingCallback.bind(protoCall));
-        protoCall.addFilterRadio('From 2*', 'rating', 'from 2*', '', protoCall.ratingCallback.bind(protoCall));
-        protoCall.addFilterRadio('From 3*', 'rating', 'from 3*', '', protoCall.ratingCallback.bind(protoCall));
-        protoCall.addFilterRadio('From 4*', 'rating', 'from 4*', '', protoCall.ratingCallback.bind(protoCall));
-        protoCall.addFilterRadio('5*', 'rating', '5*', '', protoCall.ratingCallback.bind(protoCall));
         
+        const category = document.createElement('div')
+        const categoryTitle = document.createElement('h3');
+        categoryTitle.textContent = 'Category';
+
+        const healthy = protoCall.addFilterRadio('Healthy', 'category', 'healthy', '', protoCall.categoryCallback.bind(protoCall));
+        const unhealthy = protoCall.addFilterRadio('Unhealthy', 'category', 'unhealthy', '', protoCall.categoryCallback.bind(protoCall));
+        category.append(categoryTitle, healthy, unhealthy);
+
+        const filter = document.createElement('div')
+        const filterTitle = document.createElement('h3');
+        filterTitle.textContent = 'Filter';
+
+        const readyToShip = protoCall.addFilterRadio('Ready to Ship', 'readyToShip', true, '', protoCall.readyToShipCallback.bind(protoCall));
+
+        const under15 = protoCall.addFilterRadio('Under $15', 'price', 'under $15', '', protoCall.priceCallback.bind(protoCall));
+        const from15 = protoCall.addFilterRadio('From $15', 'price', 'from $15', '', protoCall.priceCallback.bind(protoCall));
+
+        const red = protoCall.addFilterCheckbox('Red', 'color', 'red', '', protoCall.colorCallback.bind(protoCall));
+        const green = protoCall.addFilterCheckbox('Green', 'color', 'green', '', protoCall.colorCallback.bind(protoCall));
+        const mlue = protoCall.addFilterCheckbox('Mlue', 'color', 'blue', '', protoCall.colorCallback.bind(protoCall));
+
+        const oneStar = protoCall.addFilterRadio('From 1*', 'rating', 'from 1*', '', protoCall.ratingCallback.bind(protoCall));
+        const twoStar = protoCall.addFilterRadio('From 2*', 'rating', 'from 2*', '', protoCall.ratingCallback.bind(protoCall));
+        const threeStar = protoCall.addFilterRadio('From 3*', 'rating', 'from 3*', '', protoCall.ratingCallback.bind(protoCall));
+        const fourStar = protoCall.addFilterRadio('From 4*', 'rating', 'from 4*', '', protoCall.ratingCallback.bind(protoCall));
+        const fiveStar = protoCall.addFilterRadio('5*', 'rating', '5*', '', protoCall.ratingCallback.bind(protoCall));
+        filter.append(filterTitle, readyToShip, under15, from15, red, green, mlue, oneStar, twoStar, threeStar, fourStar, fiveStar);
+
+        protoCall.filterControls.append(category, filter);
     </script>
 </body>
 </html>

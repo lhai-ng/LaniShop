@@ -80,8 +80,8 @@ function Products(options = {}) {
         filter: false,
         priceCondition: null,
         colors: [],
-        sold: false,
         prevPrice: '',
+        sold: false,
     }, options)
 
     this.id = this.opt.id;
@@ -111,48 +111,68 @@ function Products(options = {}) {
 }
 
 // Render Card
-
 Products.prototype._renderListCard = function (product) {
     const card = document.createElement('a');
     card.href = `productdetail.html?id=${product.id}`;
     card.className = 'card';
     
-    this._renderImage(card, product);
-    this._renderRating(card, product);
-    this._renderName(card, product);
-    this._renderColors(card, product);
-    this._renderPrice(card, product);
-    this._renderPrevPrice(card, product);
-    this._renderButton(card, product)
+    const cardImage = this._renderImage(product);
+    const cardRating = this._renderRating(product);
+    const cardName = this._renderName(product);
+    const colorList = this._renderColors(product);
+    const cardPrice = this._renderPrice(product);
+    const cardPrevPrice = this._renderPrevPrice(product);
+    const cardButton = this._renderButton(product, 'Add to cart!');
+    card.append(cardImage, cardRating, cardName, colorList, cardPrice, cardPrevPrice, cardButton);
    
     return card;
 }
 
-Products.prototype._renderImage = function (card, product) {
+// Render Product Detail
+Products.prototype._renderDetail = function (container, products) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedId = urlParams.get('id');
+    const product = products.find(p => p.id === parseInt(selectedId));
+
+    const imageContainer = document.createElement('div');
+    const inforContainer = document.createElement('div');
+    const cardImage = this._renderImage(product);
+    const cardRating = this._renderRating(product);
+    const cardName = this._renderName(product);
+    const colorList = this._renderColors(product);
+    const cardPrice = this._renderPrice(product);
+    const cardPrevPrice = this._renderPrevPrice(product);
+    const cardButton = this._renderButton(product, `<h3>ADD TO CART!</h3>`);
+    imageContainer.appendChild(cardImage);
+    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, colorList, cardButton);
+
+    container.append(imageContainer, inforContainer);
+}
+
+Products.prototype._renderImage = function (product) {
     const cardImage = document.createElement('img');
     cardImage.className = 'card-image';
     cardImage.setAttribute('src', product.image);
-    card.appendChild(cardImage)
+    return cardImage;
 }
 
-Products.prototype._renderRating = function(card, product) {
+Products.prototype._renderRating = function(product) {
     const cardRating = document.createElement('p');
     cardRating.className = 'card-rating';
     cardRating.textContent = product.rating;
-    card.appendChild(cardRating);
+    return cardRating;
 }
 
-Products.prototype._renderName = function (card, product) {
+Products.prototype._renderName = function (product) {
     const cardName = document.createElement('h4');
     cardName.className = 'card-name';
     cardName.textContent = product.name;
-    card.appendChild(cardName);
+    return cardName;
 }
 
-Products.prototype._renderColors = function (card, product) {
+Products.prototype._renderColors = function (product) {
     const colorList = document.createElement('div');
     colorList.className = 'color-list';
-    card.appendChild(colorList);
     if (product.colors.length > 0) {
         product.colors.forEach(color => {
             const colorSelection = document.createElement('div');
@@ -161,31 +181,31 @@ Products.prototype._renderColors = function (card, product) {
             colorList.appendChild(colorSelection);
         });
     }
+    return colorList;
 }
 
-Products.prototype._renderPrice = function (card, product) {
+Products.prototype._renderPrice = function (product) {
     const cardPrice = document.createElement('p');
     cardPrice.className = 'card-price';
     cardPrice.textContent = product.price;
-    card.appendChild(cardPrice);
+    return cardPrice
 }
 
-Products.prototype._renderPrevPrice = function (card, product) {
+Products.prototype._renderPrevPrice = function (product) {
     const cardPrevPrice = document.createElement('p');
     cardPrevPrice.className = 'card-revprice';
     cardPrevPrice.textContent = product.prevPrice;
-    card.appendChild(cardPrevPrice);
+    return cardPrevPrice
 }
 
-Products.prototype._renderButton = function (card, product) {
+Products.prototype._renderButton = function (product, content) {
     const cardButton = document.createElement('button');
     cardButton.className = `add-to-cart ${product.sold ? 'sold' : ''}`;
-    cardButton.textContent = 'Add to cart!';
-    card.appendChild(cardButton);
+    cardButton.innerHTML = content;
+    return cardButton;
 }
 
 // Render Product List
-
 Products.prototype._renderProducts = function (productList, productArray) {
     productList.innerHTML = '';
     productArray.forEach(product => {
@@ -196,9 +216,9 @@ Products.prototype._renderProducts = function (productList, productArray) {
 
 Products.prototype.renderProductList = function () {
     if (this.filter) {
-        this._filterControls = document.createElement('aside'); 
-        this._filterControls.id = 'filter-controls';
-        document.body.appendChild(this._filterControls);
+        this.filterControls = document.createElement('aside'); 
+        this.filterControls.id = 'filter-controls';
+        document.body.appendChild(this.filterControls);
     }
     this._productList = document.createElement('section');
     this._productList.id = 'product-list';
@@ -206,32 +226,12 @@ Products.prototype.renderProductList = function () {
     this._renderProducts(this._productList, products);
 }
 
-Products.prototype._renderDetail = function (product) {
-    const cardDetail = document.createElement('div');
-    cardDetail.innerHTML = `
-        <img class="card-image" src=${product.image}>
-        <p>${product.rating}</p>
-        <h3>${product.id}. ${product.name}</h3>
-        <p>${product.price}</p>
-        <p>${product.prevPrice}</p>
-        <button class="add-to-cart ${product.sold ? 'sold' : ''}">Add to cart!</button>
-    `;
-    return cardDetail;
-}
-
 // Filter Types
-
 Products.prototype.addFilterRadio = function (filterName, filterProperty, filterValue, cssClass, callback) {
-    const filterToggle = document.createElement('div');
-
-    const labelFilter = document.createElement('label');
-    labelFilter.setAttribute('for', `input-filter-${filterValue}`);
-    labelFilter.textContent = `${filterName}`;
-
-    const inputFilter = document.createElement('input');
-    inputFilter.id = `input-filter-${filterValue}`;
-    inputFilter.name = filterProperty;
-    inputFilter.type = 'radio';
+    const filterAssets = this._createFilter('radio', filterName, filterProperty, filterValue, cssClass);
+    const filterToggle = filterAssets[0];
+    const inputFilter = filterAssets[1];
+    const labelFilter = filterAssets[2];
 
     this._radioStates[inputFilter.id] = false;
 
@@ -254,10 +254,19 @@ Products.prototype.addFilterRadio = function (filterName, filterProperty, filter
     });
 
     filterToggle.append(inputFilter, labelFilter);
-    this._filterControls.appendChild(filterToggle);
+    return filterToggle;
 }
 
 Products.prototype.addFilterCheckbox = function (filterName, filterProperty, filterValue, cssClass, callback) {
+    const filterAssets = this._createFilter('checkbox', filterName, filterProperty, filterValue, cssClass);
+    const filterToggle = filterAssets[0];
+    const inputFilter = filterAssets[1];
+
+    inputFilter.addEventListener('click', (e) => callback(e.target.checked, filterValue));
+    return filterToggle;
+}
+
+Products.prototype._createFilter = function (filterType, filterName, filterProperty, filterValue, cssClass) {
     const filterToggle = document.createElement('div');
 
     const labelFilter = document.createElement('label');
@@ -267,12 +276,10 @@ Products.prototype.addFilterCheckbox = function (filterName, filterProperty, fil
     const inputFilter = document.createElement('input');
     inputFilter.id = `input-filter-${filterValue}`;
     inputFilter.name = filterProperty;
-    inputFilter.type = 'checkbox';
-
-    inputFilter.addEventListener('click', (e) => callback(e.target.checked, filterValue));
-    
+    inputFilter.type = filterType;
     filterToggle.append(inputFilter, labelFilter);
-    this._filterControls.appendChild(filterToggle);
+
+    return [filterToggle, inputFilter, labelFilter];
 }
 
 // Callback Types
@@ -307,7 +314,7 @@ Products.prototype.colorCallback = function (status, filterValue) {
     this._allFilterProducts();
 }
 
-// Render Products by filters
+// Render products by filters
 Products.prototype._allFilterProducts = function () {
     productsToShow = products;
 
