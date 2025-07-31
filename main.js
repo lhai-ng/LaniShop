@@ -115,40 +115,20 @@ Products.prototype._renderListCard = function (product) {
     const card = document.createElement('a');
     card.href = `productdetail.html?id=${product.id}`;
     card.className = 'card';
-    
+
     const cardImage = this._renderImage(product);
     const cardRating = this._renderRating(product);
     const cardName = this._renderName(product);
     const colorList = this._renderColors(product);
     const cardPrice = this._renderPrice(product);
     const cardPrevPrice = this._renderPrevPrice(product);
-    const cardButton = this._renderButton(product, 'Add to cart!');
+    const cardButton = this._renderButton(product, 'Add to cart!', this.test);
     card.append(cardImage, cardRating, cardName, colorList, cardPrice, cardPrevPrice, cardButton);
    
     return card;
 }
 
-// Render Product Detail
-Products.prototype._renderDetail = function (container, products) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedId = urlParams.get('id');
-    const product = products.find(p => p.id === parseInt(selectedId));
-
-    const imageContainer = document.createElement('div');
-    const inforContainer = document.createElement('div');
-    const cardImage = this._renderImage(product);
-    const cardRating = this._renderRating(product);
-    const cardName = this._renderName(product);
-    const colorList = this._renderColors(product);
-    const cardPrice = this._renderPrice(product);
-    const cardPrevPrice = this._renderPrevPrice(product);
-    const cardButton = this._renderButton(product, `<h3>ADD TO CART!</h3>`);
-    imageContainer.appendChild(cardImage);
-    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, colorList, cardButton);
-
-    container.append(imageContainer, inforContainer);
-}
-
+// Render Card Detail
 Products.prototype._renderImage = function (product) {
     const cardImage = document.createElement('img');
     cardImage.className = 'card-image';
@@ -198,11 +178,44 @@ Products.prototype._renderPrevPrice = function (product) {
     return cardPrevPrice
 }
 
-Products.prototype._renderButton = function (product, content) {
+Products.prototype._renderButton = function (product, content, callback) {
     const cardButton = document.createElement('button');
     cardButton.className = `add-to-cart ${product.sold ? 'sold' : ''}`;
     cardButton.innerHTML = content;
+    cardButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        callback();
+    })
     return cardButton;
+}
+
+// Add To Cart
+Products.prototype.test = function () {
+    console.log('hehe');
+    
+}
+
+// Render Product Detail
+Products.prototype._renderDetail = function (container, products) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedId = urlParams.get('id');
+    const product = products.find(p => p.id === parseInt(selectedId));
+
+    const imageContainer = document.createElement('div');
+    const inforContainer = document.createElement('div');
+    const cardImage = this._renderImage(product);
+    const cardRating = this._renderRating(product);
+    const cardName = this._renderName(product);
+    const colorList = this._renderColors(product);
+    const cardPrice = this._renderPrice(product);
+    const cardPrevPrice = this._renderPrevPrice(product);
+    const cardButton = this._renderButton(product, `<h1>ADD TO CART!</h1>`, this.test);
+    
+    imageContainer.appendChild(cardImage);
+    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, colorList, cardButton);
+
+    container.append(imageContainer, inforContainer);
 }
 
 // Render Product List
