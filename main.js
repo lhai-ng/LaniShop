@@ -122,7 +122,7 @@ Products.prototype._renderListCard = function (product) {
     const colorList = this._renderColors(product);
     const cardPrice = this._renderPrice(product);
     const cardPrevPrice = this._renderPrevPrice(product);
-    const cardButton = this._renderButton(product, 'Add to cart!', this.test);
+    const cardButton = this._renderButton(product, 'Add to cart!');
     card.append(cardImage, cardRating, cardName, colorList, cardPrice, cardPrevPrice, cardButton);
    
     return card;
@@ -178,21 +178,27 @@ Products.prototype._renderPrevPrice = function (product) {
     return cardPrevPrice
 }
 
-Products.prototype._renderButton = function (product, content, callback) {
+Products.prototype._renderButton = function (product, content) {
     const cardButton = document.createElement('button');
     cardButton.className = `add-to-cart ${product.sold ? 'sold' : ''}`;
+    if (cardButton.classList.contains('sold')) {
+        cardButton.disabled = true;
+        cardButton.style.cursor = 'default';
+    };
+    
     cardButton.innerHTML = content;
     cardButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        callback();
+        this._addToCart(product.id);
     })
     return cardButton;
 }
 
 // Add To Cart
-Products.prototype.test = function () {
-    console.log('hehe');
+Products.prototype._addToCart = function (selectedId) {
+    const product = products.find(p => p.id === selectedId)
+    console.log(product);
     
 }
 
@@ -210,7 +216,7 @@ Products.prototype._renderDetail = function (container, products) {
     const colorList = this._renderColors(product);
     const cardPrice = this._renderPrice(product);
     const cardPrevPrice = this._renderPrevPrice(product);
-    const cardButton = this._renderButton(product, `<h1>ADD TO CART!</h1>`, this.test);
+    const cardButton = this._renderButton(product, `<h1>ADD TO CART!</h1>`);
     
     imageContainer.appendChild(cardImage);
     inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, colorList, cardButton);
