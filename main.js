@@ -197,9 +197,18 @@ Products.prototype._renderButton = function (product, content) {
 
 // Add To Cart
 Products.prototype._addToCart = function (selectedId) {
-    const product = products.find(p => p.id === selectedId)
-    console.log(product);
+    const card = JSON.parse(localStorage.getItem('cart')) || [];
+    const product = products.find(p => p.id === selectedId);
     
+    const existing = card.find(item => item.product.id === selectedId);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        card.push({product, quantity: 1});
+    }
+
+    localStorage.setItem('cart', JSON.stringify(card));
+    alert(`Added ${product.name} to cart!`)
 }
 
 // Render Product Detail
