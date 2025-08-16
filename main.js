@@ -204,12 +204,12 @@ Products.prototype._renderQuantityButtons = function (item, quantity) {
     displayQuantity.value = `${quantity}`;
     displayQuantity.onchange = () => {
         const cart = JSON.parse(localStorage.getItem('cart'));
-        displayQuantity.value = `${parseInt(displayQuantity.value)}`;
         const cartItem = cart.find(i => i.product.id === item.product.id);
         if (displayQuantity.value === '' || parseInt(displayQuantity.value) < 0) {
-            displayQuantity.value = `${parseInt(cartItem.quantity)}`;
+            displayQuantity.value = `${cartItem.quantity}`;
             return;
         } 
+        displayQuantity.value = `${parseInt(displayQuantity.value)}`;
         cartItem.quantity = parseInt(displayQuantity.value);
         localStorage.setItem('cart', JSON.stringify(cart));
     }
@@ -254,7 +254,7 @@ Products.prototype._addToCart = function (selectedId) {
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-    alert(`Added ${product.name} to cart!`)
+    alert(`Added ${product.name} to cart!`);
 }
 
 Products.prototype.loadCart = function (cartListClass = '.cart-list') {
