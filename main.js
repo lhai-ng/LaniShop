@@ -195,20 +195,93 @@ Products.prototype._renderButton = function (product, content) {
     return cardButton;
 }
 
+Products.prototype._renderQuantityButtons = function (item, quantity) {
+    const quantityBoard = document.createElement('div');
+    quantityBoard.className = 'quantity-board';
+
+    const displayQuantity = document.createElement('input');
+    displayQuantity.className = 'display-quantity';
+    displayQuantity.value = `${quantity}`;
+    displayQuantity.onchange = () => {
+        const cart = JSON.parse(localStorage.getItem('cart'));
+        displayQuantity.value = `${parseInt(displayQuantity.value)}`;
+        const cartItem = cart.find(i => i.product.id === item.product.id);
+        if (displayQuantity.value === '' || parseInt(displayQuantity.value) < 0) {
+            displayQuantity.value = `${parseInt(cartItem.quantity)}`;
+            return;
+        } 
+        cartItem.quantity = parseInt(displayQuantity.value);
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    const addOneProduct = document.createElement('button');
+    addOneProduct.textContent = '+';
+    addOneProduct.className = 'adjust-quantity';
+    addOneProduct.onclick = () => {
+        displayQuantity.value = this._adjustQuantity(1, item, displayQuantity.value);   
+    }
+
+    const removeOneProduct = document.createElement('button');
+    removeOneProduct.textContent = '-';
+    removeOneProduct.className = 'adjust-quantity';
+    removeOneProduct.onclick = () => {
+        displayQuantity.value = this._adjustQuantity(-1, item, displayQuantity.value)
+    }
+
+    quantityBoard.append(removeOneProduct, displayQuantity, addOneProduct);
+    return quantityBoard;
+}
+Products.prototype._adjustQuantity = function (number, item, value) {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    const cartItem = cart.find(i => i.product.id === item.product.id);
+    cartItem.quantity += number;
+    if (cartItem.quantity <= 0) cartItem.quantity = 0;
+    value = cartItem.quantity;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    return value;
+}
+
 // Add To Cart
 Products.prototype._addToCart = function (selectedId) {
-    const card = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const product = products.find(p => p.id === selectedId);
     
-    const existing = card.find(item => item.product.id === selectedId);
+    const existing = cart.find(item => item.product.id === selectedId);
     if (existing) {
         existing.quantity += 1;
     } else {
-        card.push({product, quantity: 1});
+        cart.push({product, quantity: 1});
     }
 
-    localStorage.setItem('cart', JSON.stringify(card));
+    localStorage.setItem('cart', JSON.stringify(cart));
     alert(`Added ${product.name} to cart!`)
+}
+
+Products.prototype.loadCart = function (cartListClass = '.cart-list') {
+    const cartList = document.querySelector(cartListClass);
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartList.innerHTML = ''
+    this._renderListCart(cart, cartList);
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+Products.prototype._renderListCart = function (cart, cartList) {
+    cart.forEach(item => {
+        const cartBox = document.createElement('div');
+        cartBox.className = 'cart-box';
+        const product = item.product;
+
+        const cartImage = this._renderImage(product);
+        const cartRating = this._renderRating(product);
+        const cartName = this._renderName(product);
+        const colorList = this._renderColors(product);
+        const cartPrice = this._renderPrice(product);
+        const cartPrevPrice = this._renderPrevPrice(product);
+        const cartQuantityButtons = this._renderQuantityButtons(item, item.quantity);
+        cartBox.append(cartImage, cartRating, cartName, colorList, cartPrice, cartPrevPrice, cartQuantityButtons);
+
+        cartList.appendChild(cartBox);
+    })
 }
 
 // Render Product Detail
