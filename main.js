@@ -267,9 +267,17 @@ Products.prototype.loadCart = function (cartListClass = '.cart-list') {
     const cartList = document.querySelector(cartListClass);
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     cartList.innerHTML = ''
+
+    const emptyCart = document.createElement('h6');
+    emptyCart.textContent = 'Cart is empty, no product to show';
+    if (cart.length === 0) {
+        cartList.appendChild(emptyCart);
+    }
+
     this._renderListCart(cart, cartList);
     this._renderSubtotal(cart, cartList);
     this._renderCheckoutBtn(cartList);
+
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
