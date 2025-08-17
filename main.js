@@ -6,7 +6,6 @@ const products = [
         price: '$11',
         prevPrice: '$13,99',
         category: 'unhealthy',
-        colors: ['red', 'blue'],
         rating: 4.1,
         sold: true,
     }),
@@ -41,7 +40,6 @@ const products = [
         name: 'Blueberry',
         price: '$15',
         category: 'unhealthy',
-        colors:['red', 'green'], 
         rating: 4.7,
         sold: true,
     }),
@@ -51,7 +49,6 @@ const products = [
         name: 'Butterfly Pea',
         price: '$16',
         category: 'healthy',
-        colors:['blue', 'green'], 
         readyToShip: true,
         rating: 5,
     }),
@@ -90,7 +87,6 @@ function Products(options = {}) {
     this.price = this.opt.price;
     this.prevPrice = this.opt.prevPrice;
     this.category = this.opt.category;
-    this.colors = this.opt.colors;
     this.rating = this.opt.rating;
     this.sold = this.opt.sold
     this.readyToShip = this.opt.readyToShip
@@ -101,7 +97,6 @@ function Products(options = {}) {
 
     this._activeFilter = {
         price: null,
-        colors: [],
         rating: null,
 
         category: null,
@@ -118,16 +113,15 @@ Products.prototype._renderListCard = function (product) {
     const cardImage = this._renderImage(product);
     const cardRating = this._renderRating(product);
     const cardName = this._renderName(product);
-    const colorList = this._renderColors(product);
     const cardPrice = this._renderPrice(product);
     const cardPrevPrice = this._renderPrevPrice(product);
     const cardButton = this._renderCardBtn(product, 'Add to cart!');
-    card.append(cardImage, cardRating, cardName, colorList, cardPrice, cardPrevPrice, cardButton);
+    card.append(cardImage, cardRating, cardName, cardPrice, cardPrevPrice, cardButton);
    
     return card;
 }
 
-// Render Card Detail
+// Render Card & Cart Detail
 Products.prototype._renderImage = function (product) {
     const cardImage = document.createElement('img');
     cardImage.className = 'card-image';
@@ -138,7 +132,7 @@ Products.prototype._renderImage = function (product) {
 Products.prototype._renderRating = function(product) {
     const cardRating = document.createElement('p');
     cardRating.className = 'card-rating';
-    cardRating.textContent = product.rating;
+    cardRating.textContent = `⭐ ${product.rating}`;
     return cardRating;
 }
 
@@ -147,20 +141,6 @@ Products.prototype._renderName = function (product) {
     cardName.className = 'card-name';
     cardName.textContent = product.name;
     return cardName;
-}
-
-Products.prototype._renderColors = function (product) {
-    const colorList = document.createElement('div');
-    colorList.className = 'color-list';
-    if (product.colors.length > 0) {
-        product.colors.forEach(color => {
-            const colorSelection = document.createElement('div');
-            colorSelection.className = 'color-selection';
-            colorSelection.style.background = color;
-            colorList.appendChild(colorSelection);
-        });
-    }
-    return colorList;
 }
 
 Products.prototype._renderPrice = function (product) {
@@ -211,7 +191,7 @@ Products.prototype._renderQuantityBtns = function (item, quantity, cart, cartLis
         displayQuantity.value = `${parseInt(displayQuantity.value)}`;
         cartItem.quantity = parseInt(displayQuantity.value);
         localStorage.setItem('cart', JSON.stringify(cart));
-        this._renderTotal(item.product, quantity);
+        this.loadCart();
     }
 
     const addOneProduct = document.createElement('button');
@@ -219,7 +199,7 @@ Products.prototype._renderQuantityBtns = function (item, quantity, cart, cartLis
     addOneProduct.className = 'adjust-quantity';
     addOneProduct.onclick = () => {
         displayQuantity.value = this._adjustQuantity(1, item, displayQuantity.value);
-        this._renderTotal(item.product, quantity); 
+        this.loadCart();
     }
 
     const removeOneProduct = document.createElement('button');
@@ -227,6 +207,7 @@ Products.prototype._renderQuantityBtns = function (item, quantity, cart, cartLis
     removeOneProduct.className = 'adjust-quantity';
     removeOneProduct.onclick = () => {
         displayQuantity.value = this._adjustQuantity(-1, item, displayQuantity.value);
+        this.loadCart();
     }
 
     quantityBoard.append(removeOneProduct, displayQuantity, addOneProduct);
@@ -249,6 +230,21 @@ Products.prototype._renderTotal = function (product, quantity) {
         parseFloat(product.price.replace(this._cleanRegex, "")) * quantity
     }`;
     return total;
+}
+
+Products.prototype._renderRemoveBtn = function (index) {
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.textContent = 'Remove';
+    removeBtn.onclick = () => {
+        if (confirm('Are you sure want to remove this product from cart?')) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            this.loadCart();
+        }
+    }
+    return removeBtn;
 }
 
 // Add To Cart
@@ -278,7 +274,7 @@ Products.prototype.loadCart = function (cartListClass = '.cart-list') {
 }
 
 Products.prototype._renderListCart = function (cart, cartList) {
-    cart.forEach(item => {
+    cart.forEach((item, index) => {
         const cartBox = document.createElement('div');
         cartBox.className = 'cart-box';
         const product = item.product;
@@ -286,27 +282,27 @@ Products.prototype._renderListCart = function (cart, cartList) {
         const cartImage = this._renderImage(product);
         const cartRating = this._renderRating(product);
         const cartName = this._renderName(product);
-        const colorList = this._renderColors(product);
         const cartPrice = this._renderPrice(product);
         const cartPrevPrice = this._renderPrevPrice(product);
         const cartQuantityButtons = this._renderQuantityBtns(item, item.quantity);
         const cartTotal = this._renderTotal(product, item.quantity);
+        const removeBtn = this._renderRemoveBtn(index);
         cartBox.append(
             cartImage,
             cartRating, 
             cartName, 
-            colorList, 
             cartPrice, 
             cartPrevPrice, 
             cartQuantityButtons, 
             cartTotal,
+            removeBtn
         );
         cartList.appendChild(cartBox);
     })
 }
 
 Products.prototype._renderSubtotal = function (cart, cartList) {
-    const subtotalBox = document.createElement('div');
+    const subtotalBox = document.createElement('h3');
     const subtotalValue = document.createElement('span');
     subtotalBox.className = 'subtotal-box';
     this.subtotal = 0;
@@ -342,13 +338,12 @@ Products.prototype._renderDetail = function (container, products) {
     const cardImage = this._renderImage(product);
     const cardRating = this._renderRating(product);
     const cardName = this._renderName(product);
-    const colorList = this._renderColors(product);
     const cardPrice = this._renderPrice(product);
     const cardPrevPrice = this._renderPrevPrice(product);
     const cardButton = this._renderCardBtn(product, `<h1>ADD TO CART!</h1>`);
     
     imageContainer.appendChild(cardImage);
-    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, colorList, cardButton);
+    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, cardButton);
 
     container.append(imageContainer, inforContainer);
 }
@@ -451,16 +446,6 @@ Products.prototype.ratingCallback = function (status, filterValue) {
     this._allFilterProducts();
 }
 
-Products.prototype.colorCallback = function (status, filterValue) {
-    if (status) {
-        if (!this._activeFilter.colors.includes(filterValue)) {
-            this._activeFilter.colors.push(filterValue);
-        }
-    } else {
-        this._activeFilter.colors = this._activeFilter.colors.filter(color => color !== filterValue);
-    }
-    this._allFilterProducts();
-}
 
 // Render products by filters
 Products.prototype._allFilterProducts = function () {
@@ -493,12 +478,6 @@ Products.prototype._allFilterProducts = function () {
         productsToShow = productsToShow.filter(p => {
             p = parseInt(p.rating);
             return minValue <= p && p < maxValue;
-        });
-    }
-
-    if (this._activeFilter.colors.length > 0) {
-        productsToShow = productsToShow.filter(p => {
-            return p.colors.some(color => this._activeFilter.colors.includes(color));
         });
     }
     
