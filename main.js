@@ -8,6 +8,59 @@ const products = [
         category: 'unhealthy',
         rating: 4.1,
         sold: true,
+        description: `
+            <p>
+                <strong>Anti-Fungi Spray</strong> is a fast-acting cleaning solution designed to remove and prevent 
+                mold on multiple surfaces around the home. It works effectively on painted walls, tiles, grout, 
+                kitchen areas, plastic, stainless steel, and coated wood. The water-based formula penetrates quickly, 
+                lifts mold stains, neutralizes musty odors, and leaves a thin protective layer to help slow down 
+                regrowth.
+            </p>
+            <ul>
+                <li><strong>Quick results:</strong> Cleans mold spots and dark stains efficiently.</li>
+                <li><strong>Mild formula:</strong> Gentle scent, low irritation, no harsh chlorine smell.</li>
+                <li><strong>Multi-purpose:</strong> Suitable for most sealed household surfaces.</li>
+                <li><strong>Long-lasting:</strong> Provides light protection against mold recurrence.</li>
+            </ul>
+        `,
+        productDetail: `
+            <table>
+                <tbody>
+                <tr>
+                    <th>Brand</th>
+                    <td>CitySprout</td>
+                </tr>
+                <tr>
+                    <th>Volume</th>
+                    <td>500 ml spray bottle</td>
+                </tr>
+                <tr>
+                    <th>Formula</th>
+                    <td>Water-based solution with anti-fungal agents</td>
+                </tr>
+                <tr>
+                    <th>Suitable Surfaces</th>
+                    <td>Painted walls, tiles, grout, stainless steel, plastic, coated wood</td>
+                </tr>
+                <tr>
+                    <th>Not Recommended</th>
+                    <td>Raw wood, fabrics, natural leather</td>
+                </tr>
+                <tr>
+                    <th>Scent</th>
+                    <td>Mild and fresh, fades quickly</td>
+                </tr>
+                <tr>
+                    <th>SKU</th>
+                    <td>AFS-500</td>
+                </tr>
+                <tr>
+                    <th>Shelf Life</th>
+                    <td>36 months from manufacturing date</td>
+                </tr>
+                </tbody>
+            </table>
+        `,
     }),
     new Products({
         id: 2,
@@ -88,8 +141,10 @@ function Products(options = {}) {
     this.prevPrice = this.opt.prevPrice;
     this.category = this.opt.category;
     this.rating = this.opt.rating;
-    this.sold = this.opt.sold
-    this.readyToShip = this.opt.readyToShip
+    this.sold = this.opt.sold;
+    this.readyToShip = this.opt.readyToShip;
+    this.description = this.opt.description;
+    this.productDetail = this.opt.productDetail;
 
     this.filter = this.opt.filter;
     this._cleanRegex = /[^a-zA-Z0-9]/g;
@@ -121,7 +176,7 @@ Products.prototype._renderListCard = function (product) {
     return card;
 }
 
-// Render Card & Cart Detail
+// Render Card, Cart & Detail
 Products.prototype._renderImage = function (product) {
     const cardImage = document.createElement('img');
     cardImage.className = 'card-image';
@@ -247,6 +302,30 @@ Products.prototype._renderRemoveBtn = function (index) {
     return removeBtn;
 }
 
+Products.prototype._renderDescription = function (product) {
+    const description = document.createElement('details');
+    description.className = 'description';
+    const descriptionTitle = document.createElement('summary');
+    descriptionTitle.textContent = 'Description';
+    const descriptionContent = document.createElement('div');
+    descriptionContent.innerHTML = product.description ? product.description : 'N/A';
+    
+    description.append(descriptionTitle, descriptionContent);
+    return description;
+}
+
+Products.prototype._renderProductDetail = function (product) {
+    const productDetail = document.createElement('details');
+    productDetail.className = 'product-detail';
+    const productDetailTitle = document.createElement('summary');
+    productDetailTitle.textContent = 'Product Detail';
+    const productDetailContent = document.createElement('div');
+    productDetailContent.innerHTML = product.productDetail ? product.productDetail : 'N/A';
+    
+    productDetail.append(productDetailTitle, productDetailContent);
+    return productDetail;
+}
+
 // Add To Cart
 Products.prototype._addToCart = function (selectedId) {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -349,9 +428,11 @@ Products.prototype._renderDetail = function (container, products) {
     const cardPrice = this._renderPrice(product);
     const cardPrevPrice = this._renderPrevPrice(product);
     const cardButton = this._renderCardBtn(product, `<h1>ADD TO CART!</h1>`);
+    const cardDescription = this._renderDescription(product);
+    const cardProductDetail = this._renderProductDetail(product);
     
     imageContainer.appendChild(cardImage);
-    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, cardButton);
+    inforContainer.append(cardName, cardRating, cardPrice, cardPrevPrice, cardButton, cardDescription, cardProductDetail);
 
     container.append(imageContainer, inforContainer);
 }
