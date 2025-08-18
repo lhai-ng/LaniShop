@@ -239,7 +239,7 @@ Products.prototype._renderQuantityBtns = function (item, quantity, cart, cartLis
     displayQuantity.onchange = () => {
         const cart = JSON.parse(localStorage.getItem('cart'));
         const cartItem = cart.find(i => i.product.id === item.product.id);
-        if (displayQuantity.value === '' || parseInt(displayQuantity.value) < 0) {
+        if (displayQuantity.value === '' || parseInt(displayQuantity.value) < 1) {
             displayQuantity.value = `${cartItem.quantity}`;
             return;
         } 
@@ -272,7 +272,7 @@ Products.prototype._adjustQuantity = function (number, item, value) {
     const cart = JSON.parse(localStorage.getItem('cart'));
     const cartItem = cart.find(i => i.product.id === item.product.id);
     cartItem.quantity += number;
-    if (cartItem.quantity <= 0) cartItem.quantity = 0;
+    if (cartItem.quantity <= 1) cartItem.quantity = 1;
     value = cartItem.quantity;
     localStorage.setItem('cart', JSON.stringify(cart));
     return value;
@@ -336,6 +336,11 @@ Products.prototype._addToCart = function (selectedId) {
         existing.quantity += 1;
     } else {
         cart.push({product, quantity: 1});
+    }
+
+    const cartList = document.querySelector(cartListClass = '.cart-list');
+    if (cartList) {
+        this.loadCart();
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
