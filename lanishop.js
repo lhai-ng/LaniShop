@@ -332,8 +332,8 @@ Products.prototype.renderProductList = function () {
     }
     this._productList = document.createElement('section');
     this._productList.id = 'product-list';
-    document.body.appendChild(this._productList);
     this._renderProducts(this._productList, products);
+    return this._productList;
 }
 
 // Filter Types
