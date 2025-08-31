@@ -20,7 +20,7 @@ function Products(options = {}) {
     this.productDetail = this.opt.productDetail;
 
     this.filter = this.opt.filter;
-    this._cleanRegex = /[^a-zA-Z0-9]/g;
+    this._cleanRegex = /[^a-zA-Z0-9.]/g;
     this._radioStates = {};
 
     this._activeFilter = {
@@ -112,12 +112,12 @@ Products.prototype._renderQuantityBtns = function (item, quantity, cart, cartLis
     displayQuantity.onchange = () => {
         const cart = JSON.parse(localStorage.getItem('cart'));
         const cartItem = cart.find(i => i.product.id === item.product.id);
-        if (displayQuantity.value === '' || parseInt(displayQuantity.value) < 1) {
+        if (displayQuantity.value === '' || parseFloat(displayQuantity.value) < 1) {
             displayQuantity.value = `${cartItem.quantity}`;
             return;
         } 
-        displayQuantity.value = `${parseInt(displayQuantity.value)}`;
-        cartItem.quantity = parseInt(displayQuantity.value);
+        displayQuantity.value = `${parseFloat(displayQuantity.value)}`;
+        cartItem.quantity = parseFloat(displayQuantity.value);
         localStorage.setItem('cart', JSON.stringify(cart));
         this.loadCart();
     }
@@ -296,7 +296,7 @@ Products.prototype._renderCheckoutBtn = function (cartList) {
 Products.prototype._renderDetail = function (container, products) {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedId = urlParams.get('id');
-    const product = products.find(p => p.id === parseInt(selectedId));
+    const product = products.find(p => p.id === parseFloat(selectedId));
 
     const imageContainer = document.createElement('div');
     const inforContainer = document.createElement('div');
@@ -432,7 +432,7 @@ Products.prototype._allFilterProducts = function () {
         const maxValue = priceRange.maxValue;
             
         productsToShow = productsToShow.filter(p => {
-            p = parseInt(p.price.replace(this._cleanRegex, ''));
+            p = parseFloat(p.price.replace(this._cleanRegex, ''));
             return minValue <= p && p < maxValue;
         });
     }
@@ -443,7 +443,7 @@ Products.prototype._allFilterProducts = function () {
         const maxValue = ratingRange.maxValue;
             
         productsToShow = productsToShow.filter(p => {
-            p = parseInt(p.rating);
+            p = parseFloat(p.rating);
             return minValue <= p && p < maxValue;
         });
     }
