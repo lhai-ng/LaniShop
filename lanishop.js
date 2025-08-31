@@ -211,12 +211,12 @@ Products.prototype._addToCart = function (selectedId) {
         cart.push({product, quantity: 1});
     }
 
-    const cartList = document.querySelector(cartListClass = '.cart-list');
+    localStorage.setItem('cart', JSON.stringify(cart));
+    const cartList = document.querySelector('.cart-list');
     if (cartList) {
         this.loadCart();
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
     alert(`Added ${product.name} to cart!`);
 }
 
