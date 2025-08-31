@@ -155,7 +155,7 @@ Products.prototype._renderTotal = function (product, quantity) {
     const total = document.createElement('div');
     total.className = 'cart-total';
     total.textContent = `Total: $${
-        parseFloat(product.price.replace(this._cleanRegex, "")) * quantity
+        parseFloat((parseFloat(product.price.replace(this._cleanRegex, "")) * quantity).toFixed(2))
     }`;
     return total;
 }
@@ -276,6 +276,7 @@ Products.prototype._renderSubtotal = function (cart, cartList) {
         this.subtotal += 
             parseFloat(item.product.price.replace(this._cleanRegex, "")) 
             * item.quantity
+        this.subtotal = parseFloat(this.subtotal.toFixed(2)); 
     })
     subtotalValue.textContent = `$${this.subtotal}`;
     subtotalBox.textContent = 'Subtotal: ';
