@@ -242,6 +242,10 @@ Products.prototype._renderListCart = function (cart, cartList) {
     cart.forEach((item, index) => {
         const cartBox = document.createElement('div');
         cartBox.className = 'cart-box';
+        const cartBoxInfo = document.createElement('div');
+        cartBoxInfo.className = 'cart-box-info';
+        const cartBoxRemoveTotal = document.createElement('div');
+        cartBoxRemoveTotal.className = 'cart-box-remove-total';
         const product = item.product;
 
         const cartImage = this._renderImage(product);
@@ -252,15 +256,12 @@ Products.prototype._renderListCart = function (cart, cartList) {
         const cartQuantityButtons = this._renderQuantityBtns(item, item.quantity);
         const cartTotal = this._renderTotal(product, item.quantity);
         const removeBtn = this._renderRemoveBtn(index);
+        cartBoxInfo.append(cartRating, cartName, cartPrice, cartPrevPrice, cartQuantityButtons);
+        cartBoxRemoveTotal.append(cartTotal, removeBtn);
         cartBox.append(
             cartImage,
-            cartRating, 
-            cartName, 
-            cartPrice, 
-            cartPrevPrice, 
-            cartQuantityButtons, 
-            cartTotal,
-            removeBtn
+            cartBoxInfo,
+            cartBoxRemoveTotal
         );
         cartList.appendChild(cartBox);
     })
