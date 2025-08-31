@@ -65,7 +65,7 @@ Products.prototype._renderRating = function(product) {
 }
 
 Products.prototype._renderName = function (product) {
-    const cardName = document.createElement('h4');
+    const cardName = document.createElement('h5');
     cardName.className = 'card-name';
     cardName.textContent = product.name;
     return cardName;
@@ -223,9 +223,9 @@ Products.prototype._addToCart = function (selectedId) {
 Products.prototype.loadCart = function (cartListClass = '.cart-list') {
     const cartList = document.querySelector(cartListClass);
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cartList.innerHTML = ''
 
     const emptyCart = document.createElement('h6');
+    emptyCart.className = 'empty-cart';
     emptyCart.textContent = 'Cart is empty, no product to show';
     if (cart.length === 0) {
         cartList.appendChild(emptyCart);
