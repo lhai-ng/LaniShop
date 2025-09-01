@@ -32,23 +32,6 @@ function Products(options = {}) {
     }
 }
 
-// Render Card
-Products.prototype._renderListCard = function (product) {
-    const card = document.createElement('a');
-    card.href = `productdetail.html?id=${product.id}`;
-    card.className = 'card';
-
-    const cardImage = this._renderImage(product);
-    const cardRating = this._renderRating(product);
-    const cardName = this._renderName(product);
-    const cardPrice = this._renderPrice(product);
-    const cardPrevPrice = this._renderPrevPrice(product);
-    const cardButton = this._renderCardBtn(product, 'Add to cart!');
-    card.append(cardImage, cardRating, cardName, cardPrice, cardPrevPrice, cardButton);
-   
-    return card;
-}
-
 // Render Card, Cart & Detail
 Products.prototype._renderImage = function (product) {
     const cardImage = document.createElement('img');
@@ -60,7 +43,10 @@ Products.prototype._renderImage = function (product) {
 Products.prototype._renderRating = function(product) {
     const cardRating = document.createElement('p');
     cardRating.className = 'card-rating';
-    cardRating.textContent = `⭐ ${product.rating}`;
+    cardRating.innerHTML = `
+        <img src="${this._starImageLink}" alt="star">
+        <p>${product.rating}</p>
+    `;
     return cardRating;
 }
 
@@ -220,9 +206,14 @@ Products.prototype._addToCart = function (selectedId) {
     alert(`Added ${product.name} to cart!`);
 }
 
-Products.prototype.loadCart = function (cartListClass = '.cart-list') {
+Products.prototype.loadCart = function (cartListClass = '.cart-list', starImageLink) {
+    if (starImageLink) {
+        this._starImageLink = starImageLink;
+    }
+    
     const cartList = document.querySelector(cartListClass);
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartList.innerHTML = '';
 
     const emptyCart = document.createElement('h6');
     emptyCart.className = 'empty-cart';
@@ -246,6 +237,7 @@ Products.prototype._renderListCart = function (cart, cartList) {
         cartBoxInfo.className = 'cart-box-info';
         const cartBoxRemoveTotal = document.createElement('div');
         cartBoxRemoveTotal.className = 'cart-box-remove-total';
+
         const product = item.product;
 
         const cartImage = this._renderImage(product);
@@ -256,8 +248,24 @@ Products.prototype._renderListCart = function (cart, cartList) {
         const cartQuantityButtons = this._renderQuantityBtns(item, item.quantity);
         const cartTotal = this._renderTotal(product, item.quantity);
         const removeBtn = this._renderRemoveBtn(index);
-        cartBoxInfo.append(cartRating, cartName, cartPrice, cartPrevPrice, cartQuantityButtons);
-        cartBoxRemoveTotal.append(cartTotal, removeBtn);
+
+        const priceBox = document.createElement('div');
+        priceBox.className = 'price-box';
+        priceBox.innerHTML = `
+            <p>Price</p>
+            <div>
+                ${cartPrice.outerHTML}
+                ${cartPrevPrice.outerHTML}
+            </div>
+        `;
+        const quantityBox = document.createElement('div');
+        quantityBox.className = 'quantity-box';
+        const quantityTitle = document.createElement('p');
+        quantityTitle.textContent = 'Quantity';
+        quantityBox.append(quantityTitle, cartQuantityButtons)
+        
+        cartBoxInfo.append(cartName, cartRating, priceBox, quantityBox);
+        cartBoxRemoveTotal.append(removeBtn, cartTotal);
         cartBox.append(
             cartImage,
             cartBoxInfo,
@@ -292,6 +300,23 @@ Products.prototype._renderCheckoutBtn = function (cartList) {
         alert('Proceeding to checkout...')
     }
     cartList.appendChild(checkoutBtn);
+}
+
+// Render Card
+Products.prototype._renderListCard = function (product) {
+    const card = document.createElement('a');
+    card.href = `productdetail.html?id=${product.id}`;
+    card.className = 'card';
+
+    const cardImage = this._renderImage(product);
+    const cardRating = this._renderRating(product);
+    const cardName = this._renderName(product);
+    const cardPrice = this._renderPrice(product);
+    const cardPrevPrice = this._renderPrevPrice(product);
+    const cardButton = this._renderCardBtn(product, 'Add to cart!');
+    card.append(cardImage, cardRating, cardName, cardPrice, cardPrevPrice, cardButton);
+   
+    return card;
 }
 
 // Render Product Detail

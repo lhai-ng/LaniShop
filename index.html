@@ -86,11 +86,10 @@
     <script src="products.js"></script>
     
     <script>
+        protoCall.loadCart('.cart-list', "images/Vector.svg");
         const main = document.querySelector('main');
         const productList = protoCall.renderProductList();
         main.appendChild(productList);
-
-        protoCall.loadCart('.cart-list');
 
         const category = document.createElement('div')
         const categoryTitle = document.createElement('h3');
