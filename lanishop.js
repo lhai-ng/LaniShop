@@ -41,7 +41,7 @@ Products.prototype._renderImage = function (product) {
 }
 
 Products.prototype._renderRating = function(product) {
-    const cardRating = document.createElement('p');
+    const cardRating = document.createElement('div');
     cardRating.className = 'card-rating';
     cardRating.innerHTML = `
         <img src="${this._starImageLink}" alt="star">
@@ -210,10 +210,15 @@ Products.prototype.loadCart = function (cartListClass = '.cart-list', starImageL
     if (starImageLink) {
         this._starImageLink = starImageLink;
     }
-    
+
     const cartList = document.querySelector(cartListClass);
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     cartList.innerHTML = '';
+
+    const cartTitle = document.createElement('h3');
+    cartTitle.className = 'cart-title';
+    cartTitle.textContent = 'Shopping cart';
+    cartList.appendChild(cartTitle);
 
     const emptyCart = document.createElement('h6');
     emptyCart.className = 'empty-cart';
@@ -276,7 +281,7 @@ Products.prototype._renderListCart = function (cart, cartList) {
 }
 
 Products.prototype._renderSubtotal = function (cart, cartList) {
-    const subtotalBox = document.createElement('h3');
+    const subtotalBox = document.createElement('h4');
     const subtotalValue = document.createElement('span');
     subtotalBox.className = 'subtotal-box';
     this.subtotal = 0;
